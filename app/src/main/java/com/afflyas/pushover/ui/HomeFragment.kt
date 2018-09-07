@@ -70,13 +70,13 @@ class HomeFragment : Fragment() {
         }
 
         if(viewModel.userKey.isEmpty()){
-            viewModel.userKey = PushoverApiService.MY_USER_KEY
-            userKeyEditText.setText(PushoverApiService.MY_USER_KEY, TextView.BufferType.EDITABLE)
+            viewModel.userKey = PushoverApiService.FINSOFT_USER_KEY
+            userKeyEditText.setText(PushoverApiService.FINSOFT_USER_KEY, TextView.BufferType.EDITABLE)
         }
 
         if(viewModel.deviceName == null){
-            viewModel.deviceName = PushoverApiService.MY_DEVICE
-            deviceEditText.setText(PushoverApiService.MY_DEVICE, TextView.BufferType.EDITABLE)
+            viewModel.deviceName = PushoverApiService.FINSOFT_DEVICE
+            deviceEditText.setText(PushoverApiService.FINSOFT_DEVICE, TextView.BufferType.EDITABLE)
         }
 
         if(viewModel.sendTimeStr.value == null) viewModel.sendTimeStr.value = "Send message immediately"
@@ -143,7 +143,6 @@ class HomeFragment : Fragment() {
     private fun showTimePickerDialog() {
         val curTime = Calendar.getInstance()
         val datePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-            //                val curTime = Calendar.getInstance().
             val date = Date()   // given date
             val calendar = Calendar.getInstance() // creates a new calendar instance
             calendar.time = date   // assigns calendar to given date

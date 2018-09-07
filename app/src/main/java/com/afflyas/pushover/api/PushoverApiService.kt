@@ -10,6 +10,9 @@ interface PushoverApiService {
         const val MY_USER_KEY = "ujnifpj177v4of2ppm51imzr5imgg7"
         const val MY_DEVICE = "oneplus5t"
 
+        const val FINSOFT_USER_KEY = "u3ba37zs37ftt72cab43qwp2xofidn"
+        const val FINSOFT_DEVICE = "galaxys9"
+
         const val APP_API_TOKEN = "aoa6mhehd4ke45d6fg8j2k2s3i4iwq"
 
         const val BASE_URL = "https://api.pushover.net/1/"
