@@ -24,8 +24,8 @@ interface PushoverApiService {
             @Query("token") token: String,
             @Query("user") user: String,
             @Query("device") device: String,
-            @Query("message") message: String
-
+            @Query("message") message: String,
+            @Query("timestamp") timestamp: Long
     ): Call<PushResponse>
 
 }

@@ -1,14 +1,13 @@
 package com.afflyas.pushover.ui
 
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.afflyas.pushover.R
@@ -20,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 
 class HomeFragment : Fragment() {
@@ -30,6 +30,7 @@ class HomeFragment : Fragment() {
     lateinit var userKeyEditText: EditText
     lateinit var messageEditText: EditText
     lateinit var deviceEditText: EditText
+    lateinit var sendTimeText: TextView
 
     private val apiService = Retrofit.Builder()
             .baseUrl(PushoverApiService.BASE_URL)
@@ -46,8 +47,14 @@ class HomeFragment : Fragment() {
         messageEditText = v.messageEditText
         deviceEditText = v.deviceEditText
 
+        sendTimeText = v.sendTime
+
         v.sendButton.setOnClickListener {
             pushMessage()
+        }
+
+        v.pickSendTime.setOnClickListener {
+            showTimePickerDialog()
         }
 
         return v
@@ -71,6 +78,13 @@ class HomeFragment : Fragment() {
             viewModel.deviceName = PushoverApiService.MY_DEVICE
             deviceEditText.setText(PushoverApiService.MY_DEVICE, TextView.BufferType.EDITABLE)
         }
+
+        if(viewModel.sendTimeStr.value == null) viewModel.sendTimeStr.value = "Send message immediately"
+
+        viewModel.sendTimeStr.observe(this, androidx.lifecycle.Observer {
+            sendTimeText.text = it
+        })
+
 
         subscribeEditText()
     }
@@ -126,6 +140,22 @@ class HomeFragment : Fragment() {
         })
     }
 
+    private fun showTimePickerDialog() {
+        val curTime = Calendar.getInstance()
+        val datePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+            //                val curTime = Calendar.getInstance().
+            val date = Date()   // given date
+            val calendar = Calendar.getInstance() // creates a new calendar instance
+            calendar.time = date   // assigns calendar to given date
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            calendar.set(Calendar.MINUTE, minute)
+            viewModel.timestamp = calendar.timeInMillis
+            viewModel.sendTimeStr.value = "Send the message at " + hourOfDay.toString() + " : " + minute.toString()
+        }, curTime.get(Calendar.HOUR_OF_DAY), curTime.get(Calendar.MINUTE), true)
+
+        datePicker.show()
+    }
+
 
     private fun pushMessage(){
 
@@ -148,7 +178,8 @@ class HomeFragment : Fragment() {
                 viewModel.apiToken,
                 viewModel.userKey,
                 viewModel.deviceName!!,
-                viewModel.messageText
+                viewModel.messageText,
+                viewModel.timestamp
         ).enqueue(object : Callback<PushResponse>{
             override fun onFailure(call: Call<PushResponse>, t: Throwable) {
                 Toast.makeText(context, "Push failed", Toast.LENGTH_SHORT).show()
